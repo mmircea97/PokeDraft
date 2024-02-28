@@ -5,6 +5,8 @@ VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokeDraft", "PokeDraft\PokeDraft.csproj", "{D68F263A-DFB4-4C0F-892D-857FDCFBC66F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokeDraft.Tests", "PokeDraft.Tests\PokeDraft.Tests.csproj", "{D0B83F79-61C0-46DE-935A-42680408855C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{D68F263A-DFB4-4C0F-892D-857FDCFBC66F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D68F263A-DFB4-4C0F-892D-857FDCFBC66F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D68F263A-DFB4-4C0F-892D-857FDCFBC66F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0B83F79-61C0-46DE-935A-42680408855C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0B83F79-61C0-46DE-935A-42680408855C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0B83F79-61C0-46DE-935A-42680408855C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0B83F79-61C0-46DE-935A-42680408855C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

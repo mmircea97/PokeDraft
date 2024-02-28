@@ -1,0 +1,6 @@
+@PokeDraft_HostAddress = http://localhost:5239
+
+GET {{PokeDraft_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -54,7 +54,7 @@ namespace PokeDraft.Tests.Controller
         [Fact]
         public async Task GetTypeById_TypeExists_ReturnType()
         {
-            _contextInMemory.Types.Add(new Type { TypeName = "Mud" });
+            await _typesService.CreateTypeAsync(new Type { TypeName = "Mud" });
             var result = await _typesService.GetTypeByIdAsync("Mud");
             result.Should().NotBeNull();
         }

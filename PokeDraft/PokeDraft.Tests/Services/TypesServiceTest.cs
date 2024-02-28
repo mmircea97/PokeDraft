@@ -44,12 +44,21 @@ namespace PokeDraft.Tests.Controller
         }
 
         [Fact]
-        public async Task GetTypeById_TypeExists_ReturnType()
+        public async Task PostType_TypeDoesNotExist_ReturnTrue()
         {
-            var result = await _typesService.GetTypeByIdAsync("Steel");
-            result.Should().NotBeNull();
+            var result = await _typesService.CreateTypeAsync(new Type { TypeName = "Mud" });
+            result.Should().BeTrue();
         }
 
 
+        [Fact]
+        public async Task GetTypeById_TypeExists_ReturnType()
+        {
+            _contextInMemory.Types.Add(new Type { TypeName = "Mud" });
+            var result = await _typesService.GetTypeByIdAsync("Mud");
+            result.Should().NotBeNull();
+        }
     }
+
+
 }

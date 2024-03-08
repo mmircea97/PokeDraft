@@ -9,5 +9,6 @@ namespace PokeDraft.Services.TypesServices
         public Task<bool> CreateTypeAsync(Type type);
         public Task<bool> DeleteTypeAsync(Type type);
         public Task<Type?> UpdateTypeAsync(Type type, string typeName);
+        public Task<bool> NameExists(string typeName);
     }
 }

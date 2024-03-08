@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PokeDraft.Models;
 using Type = PokeDraft.Models.Type;
 
 namespace PokeDraft.Data
@@ -10,5 +11,6 @@ namespace PokeDraft.Data
         }
 
         public DbSet<Type> Types { get; set; }
+        public DbSet<Species> Species { get; set; }
     }
 }

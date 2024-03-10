@@ -9,6 +9,7 @@ using AutoMapper;
 using PokeDraft.Exceptions.Type;
 using PokeDraft.Helpers.Validators;
 using FluentValidation;
+using Type = PokeDraft.Models.Type;
 
 namespace PokeDraft.Services.SpeciesService
 {
@@ -17,13 +18,15 @@ namespace PokeDraft.Services.SpeciesService
         private readonly ApplicationDBContext _context;
         private readonly ITypesService _typesService;
         private readonly IMapper _mapper;
+        private readonly IValidator<Species> _validator;
         private const string _elementName = "species";
 
-        public SpeciesService(ApplicationDBContext context, ITypesService typesService, IMapper mapper)
+        public SpeciesService(ApplicationDBContext context, ITypesService typesService, IMapper mapper, IValidator<Species> validator)
         {
             _context = context;
             _typesService = typesService;
             _mapper = mapper;
+            _validator = validator;
         }
 
         public async Task<IEnumerable<Species>> GetSpeciesAsync()
@@ -73,7 +76,16 @@ namespace PokeDraft.Services.SpeciesService
                 }
             }
 
-            _context.Species.Add(_mapper.Map<Species>(species));
+            var newSpecies = _mapper.Map<Species>(species);
+
+            var validationResult = await _validator.ValidateAsync(newSpecies);
+
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(FailureMessages.InvalidInput + " " + validationResult.ToString());
+            }
+
+            _context.Species.Add(newSpecies);
             await _context.SaveChangesAsync();
             return true;
         }
@@ -98,7 +110,14 @@ namespace PokeDraft.Services.SpeciesService
 
             species.SpeciesEvolutionId = evolutionData.SpeciesEvolutionId;
             species.EvolutionLevel = evolutionData.EvolutionLevel;
-            
+
+            var validationResult = await _validator.ValidateAsync(species);
+
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(FailureMessages.InvalidInput + " " + validationResult.ToString());
+            }
+
             _context.Species.Update(species);
             await _context.SaveChangesAsync();
             return species;
@@ -127,12 +146,54 @@ namespace PokeDraft.Services.SpeciesService
             species.PrimaryType = typing.PrimaryType;
             species.SecondaryType = typing.SecondaryType;
 
+            var validationResult = await _validator.ValidateAsync(species);
+
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(FailureMessages.InvalidInput + " " + validationResult.ToString());
+            }
+
             _context.Species.Update(species);
             await _context.SaveChangesAsync();
             return species;
 
         }
 
+
+        public async Task<Species?> ModifyImageName(int id, ModifyImageNameDTO imageName)
+        {
+            var species = await GetSpeciesByIdAsync(id);
+            if (species == null)
+            {
+                throw new SpeciesDoesNotExistException(String.Format(FailureMessages.ElementNotFound, _elementName));
+            }
+            species.ImageName = imageName.ImageName;
+
+            var validationResult = await _validator.ValidateAsync(species);
+
+            if (!validationResult.IsValid)
+            {
+                throw new ValidationException(FailureMessages.InvalidInput + " " + validationResult.ToString());
+            }
+
+            _context.Species.Update(species);
+            await _context.SaveChangesAsync();
+            return species;
+        }
+
+
+        public async Task<bool> DeleteSpeciesByNameAsync(DeleteSpeciesByNameDTO speciesName)
+        {
+            var species = await GetSpeciesByName(speciesName.SpeciesName);
+            if (species == null)
+            {
+                throw new SpeciesDoesNotExistException(String.Format(FailureMessages.ElementNotFound, _elementName));
+            }
+
+            _context.Species.Remove(species);
+            await _context.SaveChangesAsync();
+            return true;
+        }
 
         //Checks if a species with the given name already exists.
         public async Task<bool> NameExists(String speciesName)

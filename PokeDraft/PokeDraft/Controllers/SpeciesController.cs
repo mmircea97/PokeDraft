@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PokeDraft.DTOs;
 using PokeDraft.Exceptions.Species;
 using PokeDraft.Exceptions.Type;
+using PokeDraft.Helpers;
 using PokeDraft.Services.SpeciesService;
 using System.Drawing;
 using System.Net;
@@ -14,16 +16,20 @@ namespace PokeDraft.Controllers
     public class SpeciesController : ControllerBase
     {
         private readonly ISpeciesService _speciesService;
+        private readonly ILogger<SpeciesController> _logger;
 
-        public SpeciesController(ISpeciesService speciesService)
+        public SpeciesController(ISpeciesService speciesService, ILogger<SpeciesController> logger)
         {
             _speciesService = speciesService;
+            _logger = logger;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetSpecies()
         {
+            _logger.LogInformation("GetSpecies START.");
             var species = await _speciesService.GetSpeciesAsync();
+            _logger.LogInformation("GetSpecies END.");
             return Ok(species);
         }
 
@@ -32,10 +38,13 @@ namespace PokeDraft.Controllers
         {
             try
             {
+                _logger.LogInformation("GetSpeciesById START.");
                 var species = await _speciesService.GetSpeciesByIdAsync(id);
+                _logger.LogInformation("Species found successfully. GetSpeciesById END");
                 return Ok(species);
             }
             catch (SpeciesDoesNotExistException ex) {
+                _logger.LogInformation($"Species with the id: {id} does not exist. GetSpeciesById END with message: {ex.Message}");
                 return StatusCode((int)HttpStatusCode.NotFound, ex.Message);
             }
         }
@@ -71,6 +80,10 @@ namespace PokeDraft.Controllers
             {
                 return StatusCode((int)HttpStatusCode.NotFound, ex.Message);
             }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
 
@@ -85,6 +98,10 @@ namespace PokeDraft.Controllers
             catch (SpeciesDoesNotExistException ex)
             {
                 return StatusCode((int)HttpStatusCode.NotFound, ex.Message);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
             }
         }
 
@@ -101,6 +118,42 @@ namespace PokeDraft.Controllers
                 return NotFound(ex.Message);
             }
             catch (TypeDoesNotExistException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPatch("img/{id}")]
+        public async Task<IActionResult> UpdateSpeciesImage([FromRoute]int id, [FromBody]ModifyImageNameDTO imageName)
+        {
+            try
+            {
+                var updatedSpecies = await _speciesService.ModifyImageName(id, imageName);
+                return Ok(updatedSpecies);
+            }
+            catch (SpeciesDoesNotExistException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteSpeciesByName([FromBody]DeleteSpeciesByNameDTO speciesName)
+        {
+            try
+            {
+                await _speciesService.DeleteSpeciesByNameAsync(speciesName);
+                return Ok(SuccessMessages.ElementDeletedSuccessfully);
+            }
+            catch (SpeciesDoesNotExistException ex)
             {
                 return NotFound(ex.Message);
             }

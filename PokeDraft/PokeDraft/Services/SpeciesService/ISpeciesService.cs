@@ -11,5 +11,7 @@ namespace PokeDraft.Services.SpeciesService
         public Task<Species?> AddEvolutionData(int id, AddSpeciesEvolutionDataDTO evolutionData);
         public Task<Species?> ModifyTyping(int id, ModifyTypingDTO typing);
         public Task<Species?> GetSpeciesByName(string speciesName);
+        public Task<Species?> ModifyImageName(int id, ModifyImageNameDTO imageName);
+        public Task<bool> DeleteSpeciesByNameAsync(DeleteSpeciesByNameDTO speciesName);
     }
 }

@@ -28,3 +28,11 @@ public record ModifyTypingDTO(
     string PrimaryType,
     string? SecondaryType
 );
+
+public record ModifyImageNameDTO(
+    string ImageName
+);
+
+public record DeleteSpeciesByNameDTO(
+    string SpeciesName
+);

@@ -5,8 +5,10 @@ using PokeDraft.Data;
 using PokeDraft.Helpers.Validators;
 using PokeDraft.Services.SpeciesService;
 using PokeDraft.Services.TypesServices;
+using PokeDraft.Models;
 using Type = PokeDraft.Models.Type;
 using TypeValidator = PokeDraft.Helpers.Validators.TypeValidator;
+using PokeDraft.DTOs;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +31,8 @@ builder.Services.AddDbContext<ApplicationDBContext>(options => {
 builder.Services.AddTransient<ITypesService, TypesService>();
 builder.Services.AddTransient<ISpeciesService, SpeciesService>();
 builder.Services.AddTransient<IValidator<Type>, TypeValidator>();
+builder.Services.AddTransient<IValidator<Species>, SpeciesValidator>();
+
 
 
 builder.Logging.AddLog4Net("log4net.config");

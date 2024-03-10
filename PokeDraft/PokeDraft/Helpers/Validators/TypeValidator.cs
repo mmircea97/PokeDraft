@@ -7,8 +7,7 @@ namespace PokeDraft.Helpers.Validators
     {
         public TypeValidator() { 
             RuleFor(x=>x.TypeName).Length(3,100).WithMessage("Name must be between 3-100 characters.");
-            RuleFor(x => x.TypeName).Matches("^[A-Z][a-z]*$").WithMessage("First letter must be capital, other letters must be lowercase.");
-            RuleFor(x => x.TypeName).Matches("^[a-zA-Z]+$").WithMessage("Only letters are permitted.");
+            RuleFor(x => x.TypeName).Must(x => StringFormatValidator.IsOnlyASCIILetters(x)).WithMessage("Type name must be only lowercase letters, with the exception of the first which should be capital.");
         }
     }
 }
